@@ -1,0 +1,711 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="load_hand" params=" prefix:='' connected_to:='' left:=False *origin">
+
+        <xacro:if value="${(left == False)}">
+            <xacro:property name="hand" value="hand_right"/>
+            <xacro:property name="reverse" value="1"/>
+        </xacro:if>
+        <xacro:if value="${(left == True)}">
+            <xacro:property name="hand" value="hand_left"/>
+            <xacro:property name="reverse" value="-1"/>
+        </xacro:if>
+
+        <xacro:unless value="${not connected_to}">
+            <joint name="${prefix}${connected_to}_to_${hand}_palm_fixed" type="fixed">
+                <xacro:insert_block name="origin"/>
+                <parent link="${prefix}${connected_to}" />
+                <child link="${prefix}${hand}_palm" />
+            </joint>
+        </xacro:unless>
+
+        <link name="${prefix}${hand}_palm">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <mass value="0.91778" />
+                <inertia ixx="0.0018592" ixy="6.239E-05" ixz="-6.688E-05" iyy="0.0015814" iyz="3.163E-05" izz="0.00064901" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/palm.STL"  scale="1 ${reverse} 1"/>
+                </geometry>
+                <material name="hand_gray">
+                    <color rgba="0.2 0.2 0.2 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/palm.STL"  scale="1 ${reverse} 1"/>
+                </geometry>
+            </collision>
+        </link>
+        <link name="${prefix}${hand}_f11">
+            <inertial>
+                <origin xyz="0 0.00069742 -0.0093798" rpy="0 0 0" />
+                <mass value="0.0033015" />
+                <inertia ixx="2E-07" ixy="0" ixz="0" iyy="3.1E-07" iyz="1E-08" izz="1.4E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f11.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f11.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f11_joint" type="revolute">
+            <origin xyz="-0.022466 ${reverse * 0.027654} 0.043657" rpy="1.5708 ${reverse * 0.02618} 1.5708" />
+            <parent link="${prefix}${hand}_palm" />
+            <child link="${prefix}${hand}_f11" />
+            <axis xyz="0 0 ${-reverse}" />
+            <limit lower="-0.4" upper="0.4" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f12">
+            <inertial>
+                <origin xyz="0.026032 -0.0074611 2.268E-05" rpy="0 0 0" />
+                <mass value="0.058465" />
+                <inertia ixx="4.34E-06" ixy="-4.9E-06" ixz="5.3E-07" iyy="1.396E-05" iyz="-2.1E-07" izz="1.633E-05" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f12.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f12.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f12_joint" type="revolute">
+            <origin xyz="0 0 0" rpy="1.5708 0 1.5708" />
+            <parent link="${prefix}${hand}_f11" />
+            <child link="${prefix}${hand}_f12" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="2.09" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f13">
+            <inertial>
+                <origin xyz="0.0090975 -0.0015069 0.0013415" rpy="0 0 0" />
+                <mass value="0.014574" />
+                <inertia ixx="9.3E-07" ixy="-3.2E-07" ixz="-1.8E-07" iyy="2.04E-06" iyz="6E-08" izz="1.81E-06" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f13.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f13.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f13_joint" type="revolute">
+            <origin xyz="0.048883 -0.018383 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f12" />
+            <child link="${prefix}${hand}_f13" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f14">
+            <inertial>
+                <origin xyz="0.007749 -0.0041898 -0.00072552" rpy="0 0 0" />
+                <mass value="0.0055228" />
+                <inertia ixx="2.3E-07" ixy="-1.5E-07" ixz="2E-08" iyy="4E-07" iyz="-1E-08" izz="5E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f14.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f14.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f14_joint" type="revolute">
+            <origin xyz="0.0284 -0.0092477 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f13" />
+            <child link="${prefix}${hand}_f14" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f14_end">
+        </link>
+        <joint name="${prefix}${hand}_f14_end_joint" type="fixed">
+            <origin xyz="0.019695 -0.0034802 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f14" />
+            <child link="${prefix}${hand}_f14_end" />
+            <axis xyz="0 0 0" />
+        </joint>
+        <link name="${prefix}${hand}_f21">
+            <inertial>
+                <origin xyz="0 0.00069742 -0.0093798" rpy="0 0 0" />
+                <mass value="0.0033015" />
+                <inertia ixx="2E-07" ixy="0" ixz="0" iyy="3.1E-07" iyz="1E-08" izz="1.4E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f21.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f21.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f21_joint" type="revolute">
+            <origin xyz="-0.022466 ${reverse * 0.0022583} 0.053546" rpy="1.5708 0 1.5708" />
+            <parent link="${prefix}${hand}_palm" />
+            <child link="${prefix}${hand}_f21" />
+            <axis xyz="0 0 ${-reverse}" />
+            <limit lower="-0.4" upper="0.4" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f22">
+            <inertial>
+                <origin xyz="0.026032 -0.0074611 2.268E-05" rpy="0 0 0" />
+                <mass value="0.058465" />
+                <inertia ixx="4.34E-06" ixy="-4.9E-06" ixz="5.3E-07" iyy="1.396E-05" iyz="-2.1E-07" izz="1.633E-05" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f22.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f22.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f22_joint" type="revolute">
+            <origin xyz="0 0 0" rpy="1.5708 0 1.5708" />
+            <parent link="${prefix}${hand}_f21" />
+            <child link="${prefix}${hand}_f22" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="2.09" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f23">
+            <inertial>
+                <origin xyz="0.0090975 -0.0015069 0.0013415" rpy="0 0 0" />
+                <mass value="0.014574" />
+                <inertia ixx="9.3E-07" ixy="-3.2E-07" ixz="-1.8E-07" iyy="2.04E-06" iyz="6E-08" izz="1.81E-06" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f23.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f23.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f23_joint" type="revolute">
+            <origin xyz="0.048883 -0.018383 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f22" />
+            <child link="${prefix}${hand}_f23" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f24">
+            <inertial>
+                <origin xyz="0.007749 -0.0041898 -0.00072552" rpy="0 0 0" />
+                <mass value="0.0055228" />
+                <inertia ixx="2.3E-07" ixy="-1.5E-07" ixz="2E-08" iyy="4E-07" iyz="-1E-08" izz="5E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f24.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f24.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f24_joint" type="revolute">
+            <origin xyz="0.0284 -0.0092477 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f23" />
+            <child link="${prefix}${hand}_f24" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f24_end">
+        </link>
+        <joint name="${prefix}${hand}_f24_end_joint" type="fixed">
+            <origin xyz="0.019695 -0.0034802 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f24" />
+            <child link="${prefix}${hand}_f24_end" />
+            <axis xyz="0 0 0" />
+        </joint>
+        <link name="${prefix}${hand}_f31">
+            <inertial>
+                <origin xyz="-6.964E-05 -0.00044078 -0.012759" rpy="0 0 0" />
+                <mass value="0.0085521" />
+                <inertia ixx="7.6E-07" ixy="0" ixz="0" iyy="7.6E-07" iyz="4E-08" izz="1.3E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f31.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f31.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f31_joint" type="revolute">
+            <origin xyz="-0.021466 ${-(reverse * 0.017542)} 0.047798" rpy="1.5708 0 1.5708" />
+            <parent link="${prefix}${hand}_palm" />
+            <child link="${prefix}${hand}_f31" />
+            <axis xyz="0 0 ${-reverse}" />
+            <limit lower="-0.4" upper="0.4" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f32">
+            <inertial>
+                <origin xyz="0.025132 0.0031733 -8.727E-05" rpy="0 0 0" />
+                <mass value="0.01244" />
+                <inertia ixx="4.5E-07" ixy="-1.2E-07" ixz="0" iyy="2.29E-06" iyz="0" izz="2.41E-06" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f32.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f32.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f32_joint" type="revolute">
+            <origin xyz="0 0 0" rpy="1.5708 0 1.5708" />
+            <parent link="${prefix}${hand}_f31" />
+            <child link="${prefix}${hand}_f32" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f33">
+            <inertial>
+                <origin xyz="0.010032 -0.00058707 -9.093E-05" rpy="0 0 0" />
+                <mass value="0.0071009" />
+                <inertia ixx="2.8E-07" ixy="-8E-08" ixz="0" iyy="6.9E-07" iyz="0" izz="7E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f33.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f33.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f33_joint" type="revolute">
+            <origin xyz="0.044995 0.00066781 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f32" />
+            <child link="${prefix}${hand}_f33" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f34">
+            <inertial>
+                <origin xyz="0.010482 -0.0030354 -1.03E-05" rpy="0 0 0" />
+                <mass value="0.0049513" />
+                <inertia ixx="1.3E-07" ixy="-6E-08" ixz="0" iyy="3.2E-07" iyz="0" izz="3.7E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f34.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f34.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f34_joint" type="revolute">
+            <origin xyz="0.024601 -0.0044465 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f33" />
+            <child link="${prefix}${hand}_f34" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f34_end">
+        </link>
+        <joint name="${prefix}${hand}_f34_end_joint" type="fixed">
+            <origin xyz="0.021134 0.0011803 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f34" />
+            <child link="${prefix}${hand}_f34_end" />
+            <axis xyz="0 0 0" />
+        </joint>
+        <link name="${prefix}${hand}_f41">
+            <inertial>
+                <origin xyz="-6.964E-05 -0.00044078 -0.012759" rpy="0 0 0" />
+                <mass value="0.0085521" />
+                <inertia ixx="7.6E-07" ixy="0" ixz="0" iyy="7.6E-07" iyz="4E-08" izz="1.3E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f41.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f41.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f41_joint" type="revolute">
+            <origin xyz="-0.021466 ${-(reverse * 0.034458)} 0.032384" rpy="1.5708 ${-(reverse * 0.034907)} 1.5708" />
+            <parent link="${prefix}${hand}_palm" />
+            <child link="${prefix}${hand}_f41" />
+            <axis xyz="0 0 ${-reverse}" />
+            <limit lower="-0.4" upper="0.4" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f42">
+            <inertial>
+                <origin xyz="0.021044 0.0035949 -7.944E-05" rpy="0 0 0" />
+                <mass value="0.0096409" />
+                <inertia ixx="3.5E-07" ixy="-3E-08" ixz="0" iyy="1.24E-06" iyz="0" izz="1.35E-06" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f42.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f42.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f42_joint" type="revolute">
+            <origin xyz="0 0 0" rpy="1.5708 0 1.5708" />
+            <parent link="${prefix}${hand}_f41" />
+            <child link="${prefix}${hand}_f42" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.6" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f43">
+            <inertial>
+                <origin xyz="0.010032 -0.00058707 -9.093E-05" rpy="0 0 0" />
+                <mass value="0.0071009" />
+                <inertia ixx="2.8E-07" ixy="-8E-08" ixz="0" iyy="6.9E-07" iyz="0" izz="7E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f43.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f43.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f43_joint" type="revolute">
+            <origin xyz="0.035975 0.001338 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f42" />
+            <child link="${prefix}${hand}_f43" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f44">
+            <inertial>
+                <origin xyz="0.010482 -0.0030354 -1.03E-05" rpy="0 0 0" />
+                <mass value="0.0049513" />
+                <inertia ixx="1.3E-07" ixy="-6E-08" ixz="0" iyy="3.2E-07" iyz="0" izz="3.7E-07" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f44.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f44.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f44_joint" type="revolute">
+            <origin xyz="0.024621 -0.004339 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f43" />
+            <child link="${prefix}${hand}_f44" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f44_end">
+        </link>
+        <joint name="${prefix}${hand}_f44_end_joint" type="fixed">
+            <origin xyz="0.021123 0.0013734 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f44" />
+            <child link="${prefix}${hand}_f44_end" />
+            <axis xyz="0 0 0" />
+        </joint>
+        <link name="${prefix}${hand}_f51">
+            <inertial>
+                <origin xyz="0.0053991 0.0016936 0.01157" rpy="0 0 0" />
+                <mass value="0.022542" />
+                <inertia ixx="3.06E-06" ixy="4.2E-07" ixz="3.3E-07" iyy="5.17E-06" iyz="1E-08" izz="3.39E-06" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f51.STL"  scale="${reverse} 1 1"/>
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f51.STL"  scale="${reverse} 1 1"/>
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f51_joint" type="revolute">
+            <xacro:if value="${(left == False)}">
+                <origin xyz="-0.00049657 0.0084524 -0.066754" rpy="0 0 0" />
+            </xacro:if>
+            <xacro:if value="${(left == True)}">
+                <origin xyz="-0.00049657 -0.0084524 -0.066754" rpy="0 0 3.14" />
+            </xacro:if>
+            <parent link="${prefix}${hand}_palm" />
+            <child link="${prefix}${hand}_f51" />
+            <axis xyz="0 0 ${-reverse}" />
+            <limit lower="0" upper="1.9" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f52">
+            <inertial>
+                <origin xyz="0.03317 -0.0064258 -0.00083733" rpy="0 0 0" />
+                <mass value="0.12909" />
+                <inertia ixx="1.628E-05" ixy="-6.22E-06" ixz="-3.01E-06" iyy="6.413E-05" iyz="1.13E-06" izz="6.867E-05" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f52.STL" scale="1 1 ${reverse}"/>
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f52.STL" scale="1 1 ${reverse}"/>
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f52_joint" type="revolute">
+            <xacro:if value="${(left == False)}">
+                <origin xyz="0.0092399 0.0031582 0.022073" rpy="1.8447 -0.25085 1.7172" />
+            </xacro:if>
+            <xacro:if value="${(left == True)}">
+                <origin xyz="-0.0092399 0.0031582 0.022073" rpy="1.2969 -0.25085 1.4244" />
+            </xacro:if>
+            <parent link="${prefix}${hand}_f51" />
+            <child link="${prefix}${hand}_f52" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.332" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f53">
+            <inertial>
+                <origin xyz="0.021453 0.0041043 -5.93E-06" rpy="0 0 0" />
+                <mass value="0.011849" />
+                <inertia ixx="6.6E-07" ixy="-1E-08" ixz="-1E-08" iyy="1.94E-06" iyz="0" izz="1.88E-06" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f53.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f53.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f53_joint" type="revolute">
+            <origin xyz="0.0654 0 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f52" />
+            <child link="${prefix}${hand}_f53" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f54">
+            <inertial>
+                <origin xyz="0.013824 -0.0017677 -5.567E-05" rpy="0 0 0" />
+                <mass value="0.010348" />
+                <inertia ixx="5.5E-07" ixy="-1.5E-07" ixz="0" iyy="1.35E-06" iyz="0" izz="1.17E-06" />
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f54.STL" />
+                </geometry>
+                <material name="hand_white">
+                    <color rgba="0.913725 0.913725 0.847059 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="${mesh_visual_path}/f54.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${prefix}${hand}_f54_joint" type="revolute">
+            <origin xyz="0.035837 0.0034221 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f53" />
+            <child link="${prefix}${hand}_f54" />
+            <axis xyz="0 0 1" />
+            <limit lower="0" upper="1.744" effort="10" velocity="3.14" />
+            <dynamics damping="1.0" friction="0.01"/>
+        </joint>
+        <link name="${prefix}${hand}_f54_end">
+        </link>
+        <joint name="${prefix}${hand}_f54_end_joint" type="fixed">
+            <origin xyz="0.024 0.0044004 0" rpy="0 0 0" />
+            <parent link="${prefix}${hand}_f54" />
+            <child link="${prefix}${hand}_f54_end" />
+            <axis xyz="0 0 0" />
+        </joint>
+
+        <link name="${prefix}${hand}_wrist">
+        </link>
+        <joint name="${prefix}${hand}_wrist_joint" type="fixed">
+            <xacro:if value="${(left == False)}">
+                <origin rpy="1.570796326 0.0 1.570796326" xyz="-0.025962 0.005739 -0.069754"/>
+            </xacro:if>
+            <xacro:if value="${(left == True)}">
+                <origin rpy="1.570796326 0.0 1.570796326" xyz="-0.025962 -0.005739 -0.069754"/>
+            </xacro:if>
+            <parent link="${prefix}${hand}_palm" />
+            <child link="${prefix}${hand}_wrist" />
+        </joint>
+
+    </xacro:macro>
+
+</robot>

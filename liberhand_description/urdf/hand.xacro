@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="hand" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Arguments -->
+    <xacro:arg name="prefix" default="" />
+    <xacro:arg name="use_hand_left" default="false" />
+
+    <xacro:include filename="$(find liberhand_description)/urdf/hand_macro.xacro" />
+    <xacro:property name="mesh_visual_path" value="file://$(find liberhand_description)/meshes/visual"/>
+
+    <link name="world"/>
+
+    <xacro:load_hand prefix="$(arg prefix)" connected_to="world" left="$(arg use_hand_left)">
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+    </xacro:load_hand>
+
+</robot>
